@@ -1,0 +1,66 @@
+from collections import deque
+
+# State is represented as (M_left, C_left, Boat_side, M_right, C_right)
+# Boat_side: 0 = left bank, 1 = right bank
+
+def is_valid(state):
+    M_left, C_left, _, M_right, C_right = state
+
+    # No negative values allowed
+    if M_left < 0 or C_left < 0 or M_right < 0 or C_right < 0:
+        return False
+
+    # Left bank rule: missionaries cannot be outnumbered
+    if M_left != 0 and M_left < C_left:
+        return False
+
+    # Right bank rule: missionaries cannot be outnumbered
+    if M_right != 0 and M_right < C_right:
+        return False
+
+    return True
+
+
+def generate_successors(state):
+    M_left, C_left, boat, M_right, C_right = state
+    moves = [(1, 0), (2, 0), (0, 1), (0, 2), (1, 1)]  # possible boat moves
+    successors = []
+
+    for m, c in moves:
+        if boat == 0:  # Boat on left → move to right
+            new_state = (M_left - m, C_left - c, 1, M_right + m, C_right + c)
+        else:  # Boat on right → move to left
+            new_state = (M_left + m, C_left + c, 0, M_right - m, C_right - c)
+
+        if is_valid(new_state):
+            successors.append(new_state)
+
+    return successors
+
+
+def solve_missionaries_cannibals():
+    start = (3, 3, 0, 0, 0)
+    goal = (0, 0, 1, 3, 3)
+
+    queue = deque([(start, [start])])
+    visited = set([start])
+
+    while queue:
+        state, path = queue.popleft()
+
+        if state == goal:
+            print("\nSolution Path:")
+            for step in path:
+                print(step)
+            return
+
+        for succ in generate_successors(state):
+            if succ not in visited:
+                visited.add(succ)
+                queue.append((succ, path + [succ]))
+
+    print("No solution found.")
+
+
+# Run the solver
+solve_missionaries_cannibals()
