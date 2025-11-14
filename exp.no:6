@@ -1,0 +1,45 @@
+# Vacuum Cleaner Problem (Simple Reflex Agent)
+
+def vacuum_world():
+    # Initial states of locations A and B
+    # 'dirty' or 'clean'
+    state = {
+        "A": "dirty",
+        "B": "dirty"
+    }
+
+    # Vacuum starts at location A
+    vacuum_location = "A"
+
+    print("Initial State:", state)
+    print("Vacuum starts at:", vacuum_location)
+
+    steps = 0
+
+    while state["A"] == "dirty" or state["B"] == "dirty":
+        print("\nStep", steps + 1)
+
+        # If current location is dirty → clean it
+        if state[vacuum_location] == "dirty":
+            print(f"Location {vacuum_location} is dirty → CLEAN")
+            state[vacuum_location] = "clean"
+
+        else:
+            # If current is clean → move to the other location
+            print(f"Location {vacuum_location} is clean → MOVE")
+            if vacuum_location == "A":
+                vacuum_location = "B"
+            else:
+                vacuum_location = "A"
+
+        print("Current State:", state)
+        print("Vacuum now at:", vacuum_location)
+
+        steps += 1
+
+    print("\nAll locations are clean.")
+    print("Total steps taken:", steps)
+
+
+# Run program
+vacuum_world()
