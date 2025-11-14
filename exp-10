@@ -1,0 +1,64 @@
+import heapq
+
+def a_star_search(graph, heuristics, start, goal):
+    # Priority queue (min-heap)
+    pq = []
+    heapq.heappush(pq, (0, start))  # (f-cost, node)
+
+    # Cost from start node
+    g_cost = {start: 0}
+
+    # Path tracking
+    parent = {start: None}
+
+    while pq:
+        current_f, current = heapq.heappop(pq)
+
+        # Goal reached
+        if current == goal:
+            path = []
+            while current is not None:
+                path.append(current)
+                current = parent[current]
+            return list(reversed(path)), g_cost[goal]
+
+        # Explore neighbors
+        for neighbor, cost in graph[current].items():
+            new_g = g_cost[current] + cost
+
+            if neighbor not in g_cost or new_g < g_cost[neighbor]:
+                g_cost[neighbor] = new_g
+                f_cost = new_g + heuristics[neighbor]
+                heapq.heappush(pq, (f_cost, neighbor))
+                parent[neighbor] = current
+
+    return None, float("inf")
+
+
+# Example graph (Adjacency with costs)
+graph = {
+    'A': {'B': 1, 'C': 3},
+    'B': {'D': 1, 'E': 5},
+    'C': {'F': 2},
+    'D': {'G': 3},
+    'E': {'G': 1},
+    'F': {'G': 2},
+    'G': {}
+}
+
+# Heuristic values (h)
+heuristics = {
+    'A': 7,
+    'B': 6,
+    'C': 4,
+    'D': 5,
+    'E': 2,
+    'F': 3,
+    'G': 0
+}
+
+# Run A* Search
+path, cost = a_star_search(graph, heuristics, 'A', 'G')
+
+print("A* Path:", path)
+print("Total Cost:", cost)
